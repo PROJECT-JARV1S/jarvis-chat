@@ -1,0 +1,16 @@
+[project]
+name = "jarvis-chat"
+version = "0.1.0"
+description = "JARVIS Chat Client - Processes voice transcripts and routes to MCP tools"
+requires-python = ">=3.13"
+dependencies = [
+    "asyncio>=4.0.0",
+    "google-generativeai>=0.8.5",
+    "httpx>=0.28.1",
+    "openai>=2.30.0",
+    "pydantic>=2.12.5",
+    "python-dotenv>=1.2.2",
+]
+
+[project.optional-dependencies]
+http = ["httpx>=0.28.0"]

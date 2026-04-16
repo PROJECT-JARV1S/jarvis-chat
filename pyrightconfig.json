@@ -1,0 +1,13 @@
+{
+  "include": ["src", "tests", "main.py"],
+  "exclude": ["**/__pycache__", "**/.*"],
+  "pythonVersion": "3.13",
+  "typeCheckingMode": "basic",
+  "pythonPath": ".venv/bin/python",
+  "extraPaths": ["src"],
+  "venvPath": ".",
+  "reportMissingImports": true,
+  "reportUnusedImport": "information",
+  "reportOptionalMemberAccess": "information",
+  "reportGeneralTypeIssues": "warning"
+}
