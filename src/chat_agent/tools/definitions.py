@@ -175,13 +175,13 @@ _DEFAULT_TOOL_DEFINITIONS: list[dict[str, Any]] = [
     },
     {
         "name": "list_directory",
-        "description": "List files and folders in a directory. Use EXACTLY these paths based on user intent: When user says 'downloads' use 'C:\\Users\\Administrator\\Downloads', when they say 'documents' use 'C:\\Users\\Administrator\\Documents', when they say 'desktop' use 'C:\\Users\\Administrator\\Desktop'. Always use the complete path, not just the parent folder.",
+        "description": "List files and folders in a directory.",
         "parameters": {
             "type": "object",
             "properties": {
                 "path": {
                     "type": "string",
-                    "description": "FULL directory path. CRITICAL: Use 'C:\\Users\\Administrator\\Downloads' for downloads, 'C:\\Users\\Administrator\\Documents' for documents, 'C:\\Users\\Administrator\\Desktop' for desktop. Never use just 'C:\\Users\\Administrator'",
+                    "description": "FULL directory path.",
                 },
                 "include_hidden": {
                     "type": "boolean",
