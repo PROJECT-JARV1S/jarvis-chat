@@ -22,7 +22,6 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
 from chat_agent import ChatAgent, AgentConfig
-from chat_agent.mcp import MCPRouter
 
 # Global event loop for persistent async operations
 _event_loop = None
@@ -62,6 +61,7 @@ def main():
     parser.add_argument("command", nargs="*", help="Command to execute")
     
     args = parser.parse_args()
+    os.environ["MCP_SERVER_URL"] = args.mcp_url
     
     print("=" * 50)
     print("JARVIS Chat Agent v0.1.0")
@@ -75,13 +75,9 @@ def main():
     elif args.command:
         # Single command mode
         transcript = " ".join(args.command)
-        router = MCPRouter()
-        register_mock_handlers(router)
-        process_transcript(agent, router, transcript)
+        process_transcript(agent, transcript)
     else:
         # Interactive mode
-        router = MCPRouter()
-        register_mock_handlers(router)
         print("\nInteractive mode. Type 'quit' or 'exit' to stop.")
         print("Type 'clear' to clear conversation history.\n")
         
@@ -101,7 +97,7 @@ def main():
                     print("[Conversation cleared]\n")
                     continue
                 
-                process_transcript(agent, router, transcript)
+                process_transcript(agent, transcript)
                 
             except KeyboardInterrupt:
                 print("\nGoodbye!")
@@ -114,7 +110,6 @@ class ChatHTTPHandler(BaseHTTPRequestHandler):
     """HTTP request handler for chat API."""
     
     agent: Optional[ChatAgent] = None
-    router: Optional[MCPRouter] = None
     
     def do_POST(self):
         """Handle POST requests."""
@@ -138,7 +133,6 @@ class ChatHTTPHandler(BaseHTTPRequestHandler):
                     
                 response_data = process_chat(
                     self.agent,
-                    self.router or MCPRouter(),
                     message,
                     session_id=session_id,
                 )
@@ -161,7 +155,6 @@ class ChatHTTPHandler(BaseHTTPRequestHandler):
 
 def process_chat(
     agent: ChatAgent,
-    router: MCPRouter,
     message: str,
     session_id: str = "default",
 ) -> dict[str, Any]:
@@ -206,7 +199,6 @@ def process_chat(
 def start_http_server(agent: ChatAgent, port: int):
     """Start HTTP API server."""
     ChatHTTPHandler.agent = agent
-    ChatHTTPHandler.router = MCPRouter()
     
     server = HTTPServer(("127.0.0.1", port), ChatHTTPHandler)
     print(f"\nChat API running on http://127.0.0.1:{port}")
@@ -221,7 +213,7 @@ def start_http_server(agent: ChatAgent, port: int):
         server.shutdown()
 
 
-def process_transcript(agent: ChatAgent, router: MCPRouter, transcript: str):
+def process_transcript(agent: ChatAgent, transcript: str):
     """Process a single transcript and print results."""
     try:
         response = run_async(agent.process_transcript(transcript))
@@ -279,13 +271,6 @@ def format_result(tool_name: str, result: dict) -> str:
         return f"{interface} {status}."
     
     return str(result)
-
-
-def register_mock_handlers(router: MCPRouter):
-    """Register mock handlers for testing without MCP Server."""
-    pass  # Router uses fallback direct execution
-
-
 
 if __name__ == "__main__":
     main()
